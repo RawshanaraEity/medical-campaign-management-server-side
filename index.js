@@ -28,12 +28,14 @@ async function run() {
     // await client.connect();
 
     const campCollection = client.db('medicalCampDB').collection('camps')
+    const reviewCollection = client.db('medicalCampDB').collection('reviews')
 
     // camp related api
     app.get('/camps', async(req, res) =>{
         const result = await campCollection.find().toArray();
         res.send(result)
     })
+   
 
     app.get('/camps/:id', async(req, res) =>{
         const id = req.params.id;
@@ -42,6 +44,11 @@ async function run() {
         res.send(result)
     })
 
+    // reviews retated api
+    app.get('/reviews', async(req, res) =>{
+        const result = await reviewCollection.find().toArray();
+        res.send(result)
+    })
   
 
 
