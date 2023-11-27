@@ -46,7 +46,7 @@ async function run() {
 
     // reviews retated api
     app.get('/reviews', async(req, res) =>{
-        const result = await reviewCollection.find().toArray();
+        const result = await reviewCollection.find().sort({date: -1}).toArray();
         res.send(result)
     })
   
