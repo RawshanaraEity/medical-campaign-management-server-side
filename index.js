@@ -29,6 +29,8 @@ async function run() {
 
     const campCollection = client.db('medicalCampDB').collection('camps')
     const reviewCollection = client.db('medicalCampDB').collection('reviews')
+    const userCollection = client.db('medicalCampDB').collection('users')
+    const registerCollection = client.db('medicalCampDB').collection('register')
 
     // camp related api
     app.get('/camps', async(req, res) =>{
@@ -43,6 +45,26 @@ async function run() {
         const result = await campCollection.findOne(query);
         res.send(result)
     })
+
+    // user related api
+    app.post('/users', async(req, res) =>{
+        const user = req.body;
+        const query = {email : user.email}
+        const existingUser = await userCollection.findOne(query)
+        if(existingUser){
+            return res.send({message: 'user already exists',insertedId: null})
+        }
+        const result = await userCollection.insertOne(user);
+        res.send(result)
+    })
+
+    // register related api
+    app.post('/register', async(req, res) =>{
+        const registereduser = req.body;
+        const result = await registerCollection.insertOne(registereduser);
+        res.send(result)
+    })
+
 
     // reviews retated api
     app.get('/reviews', async(req, res) =>{
