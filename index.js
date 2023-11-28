@@ -60,8 +60,13 @@ async function run() {
 
     // register related api
     app.post('/register', async(req, res) =>{
-        const registereduser = req.body;
-        const result = await registerCollection.insertOne(registereduser);
+        const registeredUser = req.body;
+        console.log(registeredUser);
+        const result = await registerCollection.insertOne(registeredUser);
+        await campCollection.updateOne(
+            { _id: new ObjectId(registeredUser.campId) },
+            { $inc: {  participantCount: 1 } }
+        );
         res.send(result)
     })
 
