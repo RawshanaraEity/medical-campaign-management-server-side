@@ -33,6 +33,13 @@ async function run() {
     const registerCollection = client.db('medicalCampDB').collection('register')
 
     // camp related api
+    app.post('/camps',  async(req, res) =>{
+        const camp = req.body;
+        const result = await campCollection.insertOne(camp)
+        res.send(result)
+    })
+
+
     app.get('/camps', async(req, res) =>{
         const result = await campCollection.find().toArray();
         res.send(result)
