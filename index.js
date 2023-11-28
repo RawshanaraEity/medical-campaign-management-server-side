@@ -60,6 +60,29 @@ async function run() {
         res.send(result)
     })
 
+    app.patch('/camps/:id', async (req, res) =>{
+        const item = req.body;
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)}
+        const updatedDoc = {
+            $set: {
+              campName: item.campName,
+              campFees: item.campFees,
+              scheduledDate: item.scheduledDate,
+              scheduledTime: item.scheduledTime,
+              venueLocation: item.venueLocation,
+              specializedServices: item.specializedServices,
+              healthcareProfessionals: item.healthcareProfessionals,
+              benefits: item.benefits,
+              targetAudience: item.targetAudience,
+              participantCount: item.participantCount,
+              description: item.description,
+              image: item.image
+            }
+        }
+        const result = await campCollection.updateOne(filter, updatedDoc)
+        res.send(result)
+    })
 
 
     // user related api
