@@ -173,6 +173,13 @@ async function run() {
         
     // });
 
+    app.get('/register/:email',  async(req, res) =>{
+        const query = {email: req.params.email}
+        const result = await registerCollection.find(query).toArray();
+        res.send(result)
+    })
+
+
     app.post('/register', async(req, res) =>{
         const registeredUser = req.body;
         console.log(registeredUser);
@@ -190,6 +197,7 @@ async function run() {
         const result = await registerCollection.deleteOne(query)
         res.send(result)
     })
+
 
     // reviews retated api
     app.get('/reviews', async(req, res) =>{
