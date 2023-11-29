@@ -163,6 +163,15 @@ async function run() {
         res.send(result)
     })
 
+    // app.get('/register/:campId', async (req, res) => {
+    //     const campId = req?.params?.campId;
+    //     console.log('user campId', campId);
+    //     const query = {_id:new ObjectId( campId)}
+    //     const camp = await campCollection.findOne(query);
+    //     // console.log(user)
+    //         res.send(camp)
+        
+    // });
 
     app.post('/register', async(req, res) =>{
         const registeredUser = req.body;
@@ -175,6 +184,12 @@ async function run() {
         res.send(result)
     })
 
+    app.delete('/register/:id',  async(req, res) =>{
+        const id = req.params.id
+        const query = {_id:new ObjectId (id)}
+        const result = await registerCollection.deleteOne(query)
+        res.send(result)
+    })
 
     // reviews retated api
     app.get('/reviews', async(req, res) =>{
