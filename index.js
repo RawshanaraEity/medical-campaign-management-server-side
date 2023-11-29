@@ -86,6 +86,31 @@ async function run() {
 
 
     // user related api
+
+    app.get('/users', async(req, res) =>{
+        const result = await userCollection.find().toArray();
+        res.send(result)
+    })
+
+
+    app.get('/users/organizer/:email', async (req, res) => {
+        const email = req?.params?.email;
+        console.log('user email', email);
+    
+        const query = { email: email }
+        const user = await userCollection.findOne(query);
+        console.log(user);
+        if(user) {
+            const organizer = user?.role === 'organizer'; 
+            res.send({ success: true, organizer });
+        } else {
+            // Handle the case where the user is not found
+            res.status(404).send({ success: false, message: 'User not found' });
+        }
+    });
+
+
+    
     app.post('/users', async(req, res) =>{
         const user = req.body;
         const query = {email : user.email}
@@ -95,24 +120,6 @@ async function run() {
         }
         const result = await userCollection.insertOne(user);
         res.send(result)
-    })
-
-    app.get('/users', async(req, res) =>{
-        const result = await userCollection.find().toArray();
-        res.send(result)
-    })
-
-
-    app.get('/users/organizer/:email', async(req, res) =>{
-        const email = req.params.email;
-        const query = {email: email}
-        const user = await userCollection.findOne(query);
-        let organizer = false;
-        if (user?.role === 'organizer') {
-            organizer = true;
-        }
-        res.send({ success: true, organizer })
-
     })
 
    
