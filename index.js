@@ -97,6 +97,26 @@ async function run() {
         res.send(result)
     })
 
+    app.get('/users', async(req, res) =>{
+        const result = await userCollection.find().toArray();
+        res.send(result)
+    })
+
+
+    app.get('/users/organizer/:email', async(req, res) =>{
+        const email = req.params.email;
+        const query = {email: email}
+        const user = await userCollection.findOne(query);
+        let organizer = false;
+        if (user?.role === 'organizer') {
+            organizer = true;
+        }
+        res.send({ success: true, organizer })
+
+    })
+
+   
+
     // register related api
     app.post('/register', async(req, res) =>{
         const registeredUser = req.body;
