@@ -55,6 +55,7 @@ async function run() {
         res.send(result)
     })
 
+
     app.delete('/camps/:id',  async(req, res) =>{
         const id = req.params.id
         const query = {_id:new ObjectId (id)}
@@ -192,13 +193,20 @@ async function run() {
 
 
     // reviews retated api
+    app.post('/reviews',  async(req, res) =>{
+        const review = req.body;
+        const result = await reviewCollection.insertOne(review)
+        res.send(result)
+    })
+
+
     app.get('/reviews', async(req, res) =>{
         const result = await reviewCollection.find().sort({date: -1}).toArray();
         res.send(result)
     })
 
 
-     // payment intent
+     // payment intent related api
      app.post('/create-payment-intent', async(req, res) =>{
         const { price } = req.body;
         const amount = parseInt(price * 100);
@@ -213,6 +221,12 @@ async function run() {
             clientSecret: paymentIntent.client_secret
         })
     })
+
+    app.get('/payments', async(req, res) =>{
+        const result = await paymentCollection.find().toArray();
+        res.send(result)
+    })
+
 
     app.get('/payments/:email', async(req, res) =>{
         const query = {email: req.params.email}
