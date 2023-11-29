@@ -104,12 +104,27 @@ async function run() {
             const organizer = user?.role === 'organizer'; 
             res.send({ success: true, organizer });
         } else {
-            // Handle the case where the user is not found
+          
             res.status(404).send({ success: false, message: 'User not found' });
         }
     });
 
 
+    app.get('/users/participant/:email', async (req, res) => {
+        const email = req?.params?.email;
+        console.log('user email', email);
+    
+        const query = { email: email }
+        const user = await userCollection.findOne(query);
+        console.log(user);
+        if (user) {
+            const participant = user?.role === 'participant'; 
+            res.send({ success: true, participant });
+        } else {
+            
+            res.status(404).send({ success: false, message: 'User not found' });
+        }
+    });
     
     app.post('/users', async(req, res) =>{
         const user = req.body;
