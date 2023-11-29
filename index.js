@@ -2,6 +2,7 @@ const express = require('express');
 const app = express()
 const cors = require('cors')
 require("dotenv").config();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 const port = process.env.PORT || 5000;
 
 //  middleware
@@ -31,6 +32,7 @@ async function run() {
     const reviewCollection = client.db('medicalCampDB').collection('reviews')
     const userCollection = client.db('medicalCampDB').collection('users')
     const registerCollection = client.db('medicalCampDB').collection('register')
+    const paymentCollection = client.db('medicalCampDB').collection('payments')
 
     // camp related api
     app.post('/camps',  async(req, res) =>{
@@ -163,16 +165,6 @@ async function run() {
         res.send(result)
     })
 
-    // app.get('/register/:campId', async (req, res) => {
-    //     const campId = req?.params?.campId;
-    //     console.log('user campId', campId);
-    //     const query = {_id:new ObjectId( campId)}
-    //     const camp = await campCollection.findOne(query);
-    //     // console.log(user)
-    //         res.send(camp)
-        
-    // });
-
     app.get('/register/:email',  async(req, res) =>{
         const query = {email: req.params.email}
         const result = await registerCollection.find(query).toArray();
@@ -204,7 +196,43 @@ async function run() {
         const result = await reviewCollection.find().sort({date: -1}).toArray();
         res.send(result)
     })
+
+
+     // payment intent
+     app.post('/create-payment-intent', async(req, res) =>{
+        const { price } = req.body;
+        const amount = parseInt(price * 100);
+        console.log('intent amount', amount);
+
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: amount,
+            currency: 'usd',
+            payment_method_types: ['card']
+        });
+        res.send({
+            clientSecret: paymentIntent.client_secret
+        })
+    })
+
+    app.get('/payments/:email', async(req, res) =>{
+        const query = {email: req.params.email}
+        const result = await paymentCollection.find(query).toArray();
+        res.send(result)
+    })
   
+    app.post('/payments', async(req,res) =>{
+        const payment = req.body;
+        const paymentResult = await paymentCollection.insertOne(payment);
+ 
+     //    carefully delete each item from the cart
+        console.log('pay info', payment)
+        const query = {_id: {
+         $in: payment.campIds.map(id => new ObjectId(id))
+        }};
+        const deleteResult = await registerCollection.deleteMany(query);
+         res.send({ paymentResult, deleteResult })
+ 
+     })
 
 
     // Send a ping to confirm a successful connection
