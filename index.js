@@ -134,7 +134,7 @@ async function run() {
         const user = await userCollection.findOne(query);
         // console.log(user);
         if (user) {
-            const professional = user?.role === 'professional'; 
+            const professional = user?.role === 'healthcareProfessional'; 
             res.send({ success: true, professional });
         } else {
             
@@ -158,6 +158,12 @@ async function run() {
    
 
     // register related api
+    app.get('/register', async(req, res) =>{
+        const result = await registerCollection.find().toArray();
+        res.send(result)
+    })
+
+
     app.post('/register', async(req, res) =>{
         const registeredUser = req.body;
         console.log(registeredUser);
