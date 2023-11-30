@@ -33,6 +33,16 @@ async function run() {
     const userCollection = client.db('medicalCampDB').collection('users')
     const registerCollection = client.db('medicalCampDB').collection('register')
     const paymentCollection = client.db('medicalCampDB').collection('payments')
+    const professionalCollection = client.db('medicalCampDB').collection('professionals')
+
+
+    // professionals api
+    app.get('/professionals', async(req, res) =>{
+        const result = await professionalCollection.find().toArray();
+        res.send(result)
+    })
+
+
 
     // camp related api
     app.post('/camps',  async(req, res) =>{
